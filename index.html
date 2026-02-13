@@ -8,41 +8,20 @@
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <style>
         body { background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: "MS Sans Serif", Arial, sans-serif; }
-        
-        /* Login & BSOD */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #008080; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #bsod { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0000AA; color: white; padding: 50px; display: none; z-index: 10000; font-family: 'Courier New', Courier, monospace; cursor: pointer; }
-
-        /* Desktop */
         #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 110px); grid-template-rows: repeat(auto-fill, 110px); gap: 20px; height: calc(100vh - 40px); }
         .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; width: 90px; }
         .icon img { width: 32px; height: 32px; margin-bottom: 5px; pointer-events: none; }
-
-        /* Windows */
         .window { position: absolute; z-index: 10; display: none; background: silver; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; padding: 3px; min-width: 250px; }
         .title-bar { cursor: move; }
-
-        /* Media Player & Visualizer */
         .wmp-visualizer { background: black; width: 100%; height: 80px; margin-bottom: 5px; border: 2px inset; display: flex; align-items: flex-end; justify-content: space-around; padding-bottom: 5px; }
         .bar { width: 6px; background: linear-gradient(to top, #00FF00, #FFFF00, #FF0000); animation: bounce 1.2s infinite ease-in-out; }
         @keyframes bounce { 0%, 100% { height: 10%; } 50% { height: 90%; } }
-        .bar:nth-child(2n) { animation-delay: 0.1s; }
-        .bar:nth-child(3n) { animation-delay: 0.3s; }
-        .bar:nth-child(4n) { animation-delay: 0.6s; }
-
-        /* Gallery */
         .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 280px; overflow-y: auto; background: white; border: 2px inset; padding: 5px; }
-        .gallery-grid img { width: 100%; border: 1px solid black; background: #f0f0f0; }
-
-        /* Taskbar */
+        .gallery-grid img { width: 100%; border: 1px solid black; background: #f0f0f0; min-height: 100px; }
         .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
-        .start-button { font-weight: bold; display: flex; align-items: center; padding: 2px 5px; border: 2px outset; background: #c0c0c0; height: 22px; color: black; cursor: pointer; }
-        .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; font-size: 12px; color: black; }
         #quote-marquee { flex-grow: 1; color: #000080; font-weight: bold; padding-top: 5px; font-size: 12px; }
-
-        /* Clippy */
-        #clippy { position: fixed; bottom: 50px; right: 20px; width: 150px; z-index: 2000; display: none; }
-        .clippy-bubble { background: #FFFFE1; border: 1px solid black; border-radius: 5px; padding: 8px; font-size: 11px; margin-bottom: 10px; color: black; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+        .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; font-size: 12px; color: black; }
     </style>
 </head>
 <body>
@@ -52,22 +31,10 @@
         <div class="title-bar"><div class="title-bar-text">User Login</div></div>
         <div class="window-body">
             <p style="text-align: center;">Valentine OS v1.0<br>Please enter password to continue.</p>
-            <input id="password-input" type="text" style="width: 100%;" placeholder="DD/MM/YYYY" />
+            <input id="password-input" type="text" style="width: 100%;" placeholder="17/05/2025" />
             <div style="text-align: right; margin-top: 15px;"><button onclick="checkLogin()">Login</button></div>
         </div>
     </div>
-</div>
-
-<div id="bsod" onclick="this.style.display='none'">
-    <p>*** STOP: 0x000000LOVE (FATAL_ROMANCE_ERROR)</p>
-    <p>A problem has been detected and Valentine OS has been shut down to prevent your heart from exploding.</p>
-    <p>If this is the first time you've seen this Stop error, kiss the developer.</p>
-    <p>Click anywhere to restart...</p>
-</div>
-
-<div id="clippy">
-    <div class="clippy-bubble">It looks like you're looking at photos! Want me to help you pick a favorite?</div>
-    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJpbm5ueG9reW5oZnA1YzhqbmZqbmZqbmZqbmZqbmZqbmZqbmZqJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKSjPxyS080M10I/giphy.gif" width="80">
 </div>
 
 <div id="desktop">
@@ -77,14 +44,10 @@
 </div>
 
 <div class="window" id="music-window" style="width: 350px; top: 40px; left: 40px;">
-    <div class="title-bar"><div class="title-bar-text">Windows Media Player</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('music-window')"></button></div></div>
+    <div class="title-bar"><div class="title-bar-text">Media Player</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('music-window')"></button></div></div>
     <div class="window-body">
-        <div class="wmp-visualizer">
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        </div>
-        <iframe allow="autoplay" frameborder="0" height="175" style="width:100%;overflow:hidden;background:transparent;" 
-        src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012"></iframe>
+        <div class="wmp-visualizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+        <iframe allow="autoplay" frameborder="0" height="175" style="width:100%;overflow:hidden;" src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012"></iframe>
     </div>
 </div>
 
@@ -101,55 +64,51 @@
             <option value="-zzP29emgpg">Take Care</option>
             <option value="xEB2nZJ3ynY">Until The End Of Time</option>
         </select>
-        <div style="background:black; border:2px inset; height:270px;">
-            <iframe id="video-player" width="100%" height="100%" src="https://www.youtube.com/embed/fd0uuy4mDrE" frameborder="0" allowfullscreen></iframe>
-        </div>
+        <div style="background:black; border:2px inset; height:270px;"><iframe id="video-player" width="100%" height="100%" src="https://www.youtube.com/embed/fd0uuy4mDrE" frameborder="0" allowfullscreen></iframe></div>
     </div>
 </div>
 
 <div class="window" id="gallery-window" style="width: 420px; top: 150px; left: 350px;">
     <div class="title-bar"><div class="title-bar-text">Memory Gallery</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div></div>
     <div class="window-body">
-        <div class="gallery-grid" id="main-gallery">
-            <img class="heic-img" data-src="IMG_3466.jpeg"> <img class="heic-img" data-src="IMG_3472.jpeg">
-            <img class="heic-img" data-src="IMG_3465.jpeg"> <img class="heic-img" data-src="IMG_3670.jpeg">
-            <img class="heic-img" data-src="IMG_3669.jpeg"> <img class="heic-img" data-src="IMG_4876.jpeg">
-            <img class="heic-img" data-src="IMG_5047.jpeg">
+        <div class="gallery-grid">
+            <img class="val-img" data-src="IMG_3466.heic">
+            <img class="val-img" data-src="IMG_3472.heic">
+            <img class="val-img" data-src="IMG_3465.heic">
+            <img class="val-img" data-src="IMG_3670.heic">
+            <img class="val-img" data-src="IMG_3669.heic">
+            <img class="val-img" data-src="IMG_4876.JPG">
+            <img class="val-img" data-src="IMG_5047.JPG">
         </div>
-        <p style="font-size: 9px; margin-top: 5px;">* HEIC images will automatically convert on load.</p>
     </div>
 </div>
 
 <div class="taskbar">
-    <div class="start-button" onclick="alert('System Version: Love.98\nCreated by: Fajinextdoor')">
-        <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" style="margin-right:5px"> Start
-    </div>
+    <div class="start-button"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" style="margin-right:5px"> Start</div>
     <marquee id="quote-marquee"></marquee>
     <div class="time" id="clock">12:00 PM</div>
 </div>
 
 <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
 <script>
-    const quotes = [
-        "❤️ Forever Sweet ❤️", 
-        "✨ You make my world brighter ✨", 
-        "🌹 Happy Valentine's Day 🌹", 
-        "💫 You are my favorite person 💫",
-        "🌈 To the world you are one person, but to me you are the world 🌈"
-    ];
+    const quotes = ["❤️ Forever Sweet ❤️", "✨ You are my world ✨", "🌹 Happy Valentine's Day 🌹", "💫 Every moment counts 💫"];
 
     async function processImages() {
-        const images = document.querySelectorAll('.heic-img');
+        const images = document.querySelectorAll('.val-img');
         for (let img of images) {
             const url = img.getAttribute('data-src');
+            // If it's HEIC, convert it
             if (url.toLowerCase().endsWith('.heic')) {
                 try {
                     const res = await fetch(url);
                     const blob = await res.blob();
-                    const conversion = await heic2any({ blob, toType: "image/jpeg", quality: 0.5 });
+                    const conversion = await heic2any({ blob, toType: "image/jpeg", quality: 0.6 });
                     img.src = URL.createObjectURL(conversion);
-                } catch (e) { console.error("HEIC Error:", e); }
-            } else { img.src = url; }
+                } catch (e) { console.error("HEIC failed:", url); }
+            } else {
+                // If it's JPG, just load it directly
+                img.src = url;
+            }
         }
     }
 
@@ -160,26 +119,22 @@
             document.getElementById('quote-marquee').innerText = quotes.join(" | ");
             processImages();
             new cursoreffects.fairyDustCursor({colors: ["#ff0000", "#ffffff"]});
-            setTimeout(() => { document.getElementById('clippy').style.display = 'block'; }, 8000);
-            setTimeout(() => { document.getElementById('bsod').style.display = 'block'; }, 600000); 
-        } else { alert("Incorrect Password. Hint: Our date!"); }
+        } else { alert("Try 17/05/2025"); }
     }
 
     function toggleWindow(id) {
         const win = document.getElementById(id);
         win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
-        if(win.style.display === 'block') { win.style.zIndex = Math.floor(Date.now() / 1000); }
     }
 
     function changeVideo() {
-        const id = document.getElementById('video-select').value;
-        document.getElementById('video-player').src = "https://www.youtube.com/embed/" + id;
+        document.getElementById('video-player').src = "https://www.youtube.com/embed/" + document.getElementById('video-select').value;
     }
 
+    // Draggable logic
     document.querySelectorAll('.window').forEach(win => {
         const header = win.querySelector('.title-bar');
         header.onmousedown = (e) => {
-            win.style.zIndex = Math.floor(Date.now() / 1000);
             let offset = { x: e.clientX - win.offsetLeft, y: e.clientY - win.offsetTop };
             document.onmousemove = (ev) => {
                 win.style.left = (ev.clientX - offset.x) + 'px';
