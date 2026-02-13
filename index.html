@@ -3,138 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine OS - Final Edition</title>
+    <title>Valentine OS - Ultimate Edition</title>
     <link rel="stylesheet" href="https://unpkg.com/98.css">
     <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <style>
         body { background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: "MS Sans Serif", Arial, sans-serif; }
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #008080; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 110px); grid-template-rows: repeat(auto-fill, 110px); gap: 20px; height: calc(100vh - 40px); }
+        
+        /* Desktop & Icons */
+        #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 110px); grid-template-rows: repeat(auto-fill, 110px); gap: 20px; height: calc(100vh - 40px); z-index: 1; }
         .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; width: 90px; }
         .icon img { width: 32px; height: 32px; margin-bottom: 5px; pointer-events: none; }
-        .window { position: absolute; z-index: 10; display: none; background: silver; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; padding: 3px; min-width: 250px; }
+
+        /* Windows */
+        .window { position: absolute; z-index: 10; display: none; background: silver; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; padding: 3px; }
         .title-bar { cursor: move; }
-        .wmp-visualizer { background: black; width: 100%; height: 80px; margin-bottom: 5px; border: 2px inset; display: flex; align-items: flex-end; justify-content: space-around; padding-bottom: 5px; }
-        .bar { width: 6px; background: linear-gradient(to top, #00FF00, #FFFF00, #FF0000); animation: bounce 1.2s infinite ease-in-out; }
-        @keyframes bounce { 0%, 100% { height: 10%; } 50% { height: 90%; } }
-        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 280px; overflow-y: auto; background: white; border: 2px inset; padding: 5px; }
-        .gallery-grid img { width: 100%; border: 1px solid black; background: #f0f0f0; min-height: 100px; }
-        .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
-        #quote-marquee { flex-grow: 1; color: #000080; font-weight: bold; padding-top: 5px; font-size: 12px; }
+
+        /* Feature: Paint */
+        #paint-canvas { background: white; border: 2px inset; cursor: crosshair; display: block; touch-action: none; }
+
+        /* Feature: Screensaver */
+        #screensaver { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 20000; display: none; overflow: hidden; cursor: none; }
+        .floating-heart { position: absolute; font-size: 50px; animation: float 8s linear infinite; opacity: 0.8; }
+        @keyframes float { from { transform: translateY(110vh) rotate(0deg); } to { transform: translateY(-10vh) rotate(360deg); } }
+
+        /* Feature: Desktop Pet */
+        #pet { position: fixed; bottom: 50px; right: 20px; width: 100px; cursor: pointer; z-index: 5000; display: none; }
+        .pet-bubble { position: absolute; bottom: 110%; right: 0; background: #FFFFE1; border: 1px solid black; padding: 8px; font-size: 11px; width: 140px; display: none; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); color: black; }
+
+        /* Taskbar */
+        .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 10000; }
+        #quote-marquee { flex-grow: 1; color: #000080; font-weight: bold; font-size: 12px; }
         .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; font-size: 12px; color: black; }
+
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 280px; overflow-y: auto; background: white; border: 2px inset; padding: 5px; }
+        .gallery-grid img { width: 100%; border: 1px solid black; background: #eee; min-height: 100px; }
+
+        /* Login */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #008080; display: flex; align-items: center; justify-content: center; z-index: 30000; }
     </style>
 </head>
 <body>
 
+<audio id="startup-sound" src="https://themes.win/assets/audio/98.mp3"></audio>
+
 <div id="login-screen">
-    <div class="window" style="display: block; width: 320px;">
+    <div class="window" style="display: block; width: 300px;">
         <div class="title-bar"><div class="title-bar-text">User Login</div></div>
         <div class="window-body">
-            <p style="text-align: center;">Valentine OS v1.0<br>Please enter password to continue.</p>
-            <input id="password-input" type="text" style="width: 100%;" placeholder="17/05/2025" />
+            <p style="text-align: center;">Valentine OS v9.0<br>Please enter password.</p>
+            <input id="password-input" type="text" style="width: 100%;" placeholder="DD/MM/YYYY" />
             <div style="text-align: right; margin-top: 15px;"><button onclick="checkLogin()">Login</button></div>
         </div>
     </div>
 </div>
 
-<div id="desktop">
-    <div class="icon" onclick="toggleWindow('music-window')"><img src="https://win98icons.alexmeub.com/icons/png/mmsys_cp-0.png"><span>PLAYER</span></div>
-    <div class="icon" onclick="toggleWindow('video-window')"><img src="https://win98icons.alexmeub.com/icons/png/mmsys_cp-4.png"><span>CINEMA</span></div>
-    <div class="icon" onclick="toggleWindow('gallery-window')"><img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"><span>PHOTOS</span></div>
+<div id="screensaver" onclick="stopScreensaver()"></div>
+
+<div id="pet" onclick="petSpeak()">
+    <div class="pet-bubble" id="pet-msg">Ready for love!</div>
+    <img src="https://win98icons.alexmeub.com/icons/png/tip-0.png" width="60">
 </div>
 
-<div class="window" id="music-window" style="width: 350px; top: 40px; left: 40px;">
+<div id="desktop">
+    <div class="icon" onclick="toggleWindow('music-window')"><img src="https://win98icons.alexmeub.com/icons/png/mmsys_cp-0.png"><span>MUSIC</span></div>
+    <div class="icon" onclick="toggleWindow('gallery-window')"><img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"><span>PHOTOS</span></div>
+    <div class="icon" onclick="toggleWindow('paint-window')"><img src="https://win98icons.alexmeub.com/icons/png/paint_old-4.png"><span>ART</span></div>
+    <div class="icon" onclick="toggleWindow('recycle-window')"><img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_full-4.png"><span>RECYCLE BIN</span></div>
+</div>
+
+<div class="window" id="music-window" style="width: 350px; top: 30px; left: 30px;">
     <div class="title-bar"><div class="title-bar-text">Media Player</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('music-window')"></button></div></div>
     <div class="window-body">
-        <div class="wmp-visualizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
-        <iframe allow="autoplay" frameborder="0" height="175" style="width:100%;overflow:hidden;" src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012"></iframe>
+        <iframe allow="autoplay" frameborder="0" height="175" style="width:100%;" src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012"></iframe>
     </div>
 </div>
 
-<div class="window" id="video-window" style="width: 480px; top: 80px; left: 100px;">
-    <div class="title-bar"><div class="title-bar-text">Valentine Cinema</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('video-window')"></button></div></div>
-    <div class="window-body">
-        <select id="video-select" onchange="changeVideo()" style="width:100%; margin-bottom:10px;">
-            <option value="fd0uuy4mDrE">So Into You</option>
-            <option value="POkQXeTv7-4">Sent From Heaven</option>
-            <option value="vD1bemWtjUU">Folded</option>
-            <option value="8dM5QYdTo08">Adorn You</option>
-            <option value="hcie4MOU-wQ">How Do I Breathe</option>
-            <option value="oKOtzIo-uYw">Killing Me Softly</option>
-            <option value="-zzP29emgpg">Take Care</option>
-            <option value="xEB2nZJ3ynY">Until The End Of Time</option>
-        </select>
-        <div style="background:black; border:2px inset; height:270px;"><iframe id="video-player" width="100%" height="100%" src="https://www.youtube.com/embed/fd0uuy4mDrE" frameborder="0" allowfullscreen></iframe></div>
-    </div>
-</div>
-
-<div class="window" id="gallery-window" style="width: 420px; top: 150px; left: 350px;">
-    <div class="title-bar"><div class="title-bar-text">Memory Gallery</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div></div>
+<div class="window" id="gallery-window" style="width: 400px; top: 150px; left: 200px;">
+    <div class="title-bar"><div class="title-bar-text">Gallery</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div></div>
     <div class="window-body">
         <div class="gallery-grid">
-            <img class="val-img" data-src="IMG_3466.heic">
-            <img class="val-img" data-src="IMG_3472.heic">
-            <img class="val-img" data-src="IMG_3465.heic">
-            <img class="val-img" data-src="IMG_3670.heic">
-            <img class="val-img" data-src="IMG_3669.heic">
-            <img class="val-img" data-src="IMG_4876.JPG">
+            <img class="val-img" data-src="IMG_3466.heic"> <img class="val-img" data-src="IMG_3472.heic">
+            <img class="val-img" data-src="IMG_3465.heic"> <img class="val-img" data-src="IMG_3670.heic">
+            <img class="val-img" data-src="IMG_3669.heic"> <img class="val-img" data-src="IMG_4876.JPG">
             <img class="val-img" data-src="IMG_5047.JPG">
         </div>
     </div>
 </div>
 
+<div class="window" id="paint-window" style="width: 330px; top: 50px; left: 450px;">
+    <div class="title-bar"><div class="title-bar-text">Valentine Paint</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('paint-window')"></button></div></div>
+    <div class="window-body">
+        <canvas id="paint-canvas" width="310" height="200"></canvas>
+        <div style="margin-top: 5px; display: flex; justify-content: space-between;">
+            <span>Ink: Hot Pink</span>
+            <button onclick="clearPaint()">New Canvas</button>
+        </div>
+    </div>
+</div>
+
+<div class="window" id="recycle-window" style="width: 300px; top: 250px; left: 100px;">
+    <div class="title-bar"><div class="title-bar-text">Recycle Bin</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('recycle-window')"></button></div></div>
+    <div class="window-body">
+        <p>Items in Trash:</p>
+        <ul class="tree-view" style="background: white; height: 120px; overflow-y: auto;">
+            <li onclick="openLetter('doubts')">📄 doubts.txt</li>
+            <li onclick="openLetter('fights')">📄 old_arguments.log</li>
+            <li onclick="openLetter('secret')">📄 <strong>keep_forever.txt</strong></li>
+        </ul>
+        <button style="margin-top:10px;" onclick="alert('System Error: This content is too precious to delete.')">Empty Trash</button>
+    </div>
+</div>
+
+<div class="window" id="notepad-window" style="width: 320px; top: 120px; left: 180px;">
+    <div class="title-bar"><div class="title-bar-text" id="notepad-title">Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('notepad-window')"></button></div></div>
+    <div class="window-body">
+        <textarea id="notepad-content" style="width: 100%; height: 180px; resize: none; font-family: monospace;" readonly></textarea>
+    </div>
+</div>
+
 <div class="taskbar">
-    <div class="start-button"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" style="margin-right:5px"> Start</div>
+    <div class="start-button" onclick="alert('Valentine OS v9.0\nStatus: Infinite Love')">Start</div>
     <marquee id="quote-marquee"></marquee>
     <div class="time" id="clock">12:00 PM</div>
 </div>
 
-<script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
 <script>
-    const quotes = ["❤️ Forever Sweet ❤️", "✨ You are my world ✨", "🌹 Happy Valentine's Day 🌹", "💫 Every moment counts 💫"];
-
-    async function processImages() {
-        const images = document.querySelectorAll('.val-img');
-        for (let img of images) {
-            const url = img.getAttribute('data-src');
-            // If it's HEIC, convert it
-            if (url.toLowerCase().endsWith('.heic')) {
-                try {
-                    const res = await fetch(url);
-                    const blob = await res.blob();
-                    const conversion = await heic2any({ blob, toType: "image/jpeg", quality: 0.6 });
-                    img.src = URL.createObjectURL(conversion);
-                } catch (e) { console.error("HEIC failed:", url); }
-            } else {
-                // If it's JPG, just load it directly
-                img.src = url;
-            }
-        }
-    }
+    let idleTimer;
+    const quotes = ["❤️ You're my favorite human ❤️", "✨ Love is in the air (and the code) ✨", "🌹 17/05/2025: A Great Day 🌹"];
+    const letters = {
+        doubts: "I used to wonder if true love existed. Then I met you, and now this folder is in the trash.",
+        fights: "Deleting any bad memories. Only keeping the moments that made us stronger.",
+        secret: "You found the secret file! I love you more than all the lines of code in the world. Happy Valentine's Day! ❤️"
+    };
 
     function checkLogin() {
         if(document.getElementById('password-input').value.trim() === "17/05/2025") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('desktop').style.display = 'grid';
+            document.getElementById('pet').style.display = 'block';
+            document.getElementById('startup-sound').play();
             document.getElementById('quote-marquee').innerText = quotes.join(" | ");
             processImages();
-            new cursoreffects.fairyDustCursor({colors: ["#ff0000", "#ffffff"]});
-        } else { alert("Try 17/05/2025"); }
+            initPaint();
+            resetIdleTimer();
+            if(window.cursoreffects) { new cursoreffects.fairyDustCursor({colors: ["#ff007f", "#ffffff"]}); }
+        } else { alert("Access Denied. Hint: 17/05/2025"); }
+    }
+
+    async function processImages() {
+        const images = document.querySelectorAll('.val-img');
+        for (let img of images) {
+            const url = img.getAttribute('data-src');
+            if (url.toLowerCase().endsWith('.heic')) {
+                try {
+                    const res = await fetch(url);
+                    const blob = await res.blob();
+                    const conversion = await heic2any({ blob, toType: "image/jpeg", quality: 0.5 });
+                    img.src = URL.createObjectURL(conversion);
+                } catch (e) { console.error("HEIC Error:", url); }
+            } else { img.src = url; }
+        }
+    }
+
+    function openLetter(key) {
+        document.getElementById('notepad-title').innerText = "Notepad - " + key + ".txt";
+        document.getElementById('notepad-content').value = letters[key];
+        document.getElementById('notepad-window').style.display = 'block';
+        document.getElementById('notepad-window').style.zIndex = Math.floor(Date.now() / 1000);
+    }
+
+    function initPaint() {
+        const canvas = document.getElementById('paint-canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        canvas.onmousedown = (e) => { drawing = true; draw(e); };
+        canvas.onmousemove = draw;
+        canvas.onmouseup = () => { drawing = false; ctx.beginPath(); };
+        function draw(e) {
+            if (!drawing) return;
+            ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.strokeStyle = "#ff007f";
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke(); ctx.beginPath(); ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+    }
+    function clearPaint() { const c = document.getElementById('paint-canvas'); c.getContext('2d').clearRect(0,0,c.width,c.height); }
+
+    function resetIdleTimer() { clearTimeout(idleTimer); idleTimer = setTimeout(startScreensaver, 60000); }
+    function startScreensaver() {
+        const ss = document.getElementById('screensaver');
+        ss.innerHTML = "";
+        for(let i=0; i<15; i++) {
+            let h = document.createElement('div'); h.className = 'floating-heart'; h.innerHTML = "❤️";
+            h.style.left = Math.random() * 100 + "vw"; h.style.animationDelay = Math.random() * 5 + "s";
+            ss.appendChild(h);
+        }
+        ss.style.display = 'block';
+    }
+    function stopScreensaver() { document.getElementById('screensaver').style.display = 'none'; resetIdleTimer(); }
+
+    function petSpeak() {
+        const msg = document.getElementById('pet-msg');
+        const lines = ["I love you!", "You look amazing!", "Check the Recycle Bin!", "Nice drawing!"];
+        msg.innerText = lines[Math.floor(Math.random()*lines.length)];
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 3000);
     }
 
     function toggleWindow(id) {
         const win = document.getElementById(id);
         win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
+        if(win.style.display === 'block') win.style.zIndex = Math.floor(Date.now() / 1000);
     }
 
-    function changeVideo() {
-        document.getElementById('video-player').src = "https://www.youtube.com/embed/" + document.getElementById('video-select').value;
-    }
-
-    // Draggable logic
     document.querySelectorAll('.window').forEach(win => {
-        const header = win.querySelector('.title-bar');
-        header.onmousedown = (e) => {
+        win.querySelector('.title-bar').onmousedown = (e) => {
+            win.style.zIndex = Math.floor(Date.now() / 1000);
             let offset = { x: e.clientX - win.offsetLeft, y: e.clientY - win.offsetTop };
             document.onmousemove = (ev) => {
                 win.style.left = (ev.clientX - offset.x) + 'px';
@@ -144,7 +229,9 @@
         };
     });
 
+    window.onmousemove = resetIdleTimer; window.onkeypress = resetIdleTimer;
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }, 1000);
 </script>
+<script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
 </body>
 </html>
