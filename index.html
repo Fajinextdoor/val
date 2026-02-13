@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine OS v2.0 - Special Edition</title>
+    <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <style>
+        body { background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: "MS Sans Serif", Arial, sans-serif; }
+        #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 100px); gap: 20px; height: calc(100vh - 40px); }
+        
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #008080; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        #bsod { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0000AA; color: white; padding: 50px; display: none; z-index: 10000; font-family: 'Courier New', Courier, monospace; cursor: pointer; }
+
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; }
+        .icon img { width: 32px; height: 32px; margin-bottom: 5px; }
+        .window { position: absolute; z-index: 10; display: none; }
+        
+        /* Gallery Styles */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #fff;
+            border: 2px inset;
+        }
+        .gallery-item { width: 100%; border: 1px solid #000; cursor: zoom-in; }
+        
+        .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
+        .start-button { font-weight: bold; display: flex; align-items: center; padding: 2px 5px; cursor: pointer; }
+        .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="window" style="display: block; width: 300px;">
+        <div class="title-bar"><div class="title-bar-text">Login</div></div>
+        <div class="window-body">
+            <p>Enter password (17/05/2025):</p>
+            <input id="password-input" type="text" style="width: 100%;" />
+            <div style="text-align: right; margin-top: 10px;">
+                <button onclick="checkLogin()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="desktop">
+    <div class="icon" onclick="toggleWindow('gallery-window')">
+        <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png">
+        <span>MEMORIES.jpg</span>
+    </div>
+
+    <div class="icon" onclick="toggleWindow('letter-window')">
+        <img src="https://win98icons.alexmeub.com/icons/png/notepad-5.png">
+        <span>READ_ME.txt</span>
+    </div>
+</div>
+
+<div class="window" id="gallery-window" style="width: 450px; top: 50px; left: 100px;">
+    <div class="title-bar">
+        <div class="title-bar-text">Imaging - Our Memories</div>
+        <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div>
+    </div>
+    <div class="window-body">
+        <p>Double-click to expand a memory.</p>
+        <div class="gallery-grid">
+            <img src="IMG_3466.jpg" class="gallery-item" onclick="window.open(this.src)">
+            <img src="IMG_3472.jpg" class="gallery-item" onclick="window.open(this.src)">
+            <img src="IMG_3465.jpg" class="gallery-item" onclick="window.open(this.src)">
+            <img src="IMG_3670.jpg" class="gallery-item" onclick="window.open(this.src)">
+            <img src="IMG_3669.jpg" class="gallery-item" onclick="window.open(this.src)">
+            <img src="IMG_4876.jpg" class="gallery-item" onclick="window.open(this.src)">
+            <img src="IMG_5047.jpg" class="gallery-item" onclick="window.open(this.src)">
+        </div>
+    </div>
+</div>
+
+<div class="taskbar">
+    <button class="start-button"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png"> Start</button>
+    <marquee style="flex-grow: 1; color: #000080; font-weight: bold;">❤️ HAPPY VALENTINE'S DAY! ❤️ YOU ARE MY WORLD ❤️</marquee>
+    <div class="time" id="clock">12:00 PM</div>
+</div>
+
+<script>
+    function checkLogin() {
+        if(document.getElementById('password-input').value === "17/05/2025") {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('desktop').style.display = 'grid';
+        } else { alert("Wrong password!"); }
+    }
+
+    function toggleWindow(id) {
+        const win = document.getElementById(id);
+        win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
+    }
+
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }, 1000);
+</script>
+
+</body>
+</html>
