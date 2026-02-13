@@ -59,4 +59,95 @@
         <span>CINEMA</span>
     </div>
     <div class="icon" onclick="toggleWindow('music-window')">
-        <img src="
+        <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-3.png">
+        <span>MUSIC</span>
+    </div>
+    <div class="icon" onclick="toggleWindow('letter-window')">
+        <img src="https://win98icons.alexmeub.com/icons/png/notepad-5.png">
+        <span>READ_ME.txt</span>
+    </div>
+</div>
+
+<div class="window" id="gallery-window" style="width: 450px; top: 20px; left: 40px;">
+    <div class="title-bar"><div class="title-bar-text">Our Photos</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div></div>
+    <div class="window-body"><div class="gallery-grid">
+        <img src="IMG_3466.JPG" class="gallery-item">
+        <img src="IMG_3472.JPG" class="gallery-item">
+        <img src="IMG_3465.JPG" class="gallery-item">
+        <img src="IMG_3670.JPG" class="gallery-item">
+        <img src="IMG_3669.JPG" class="gallery-item">
+        <img src="IMG_4876.JPG" class="gallery-item">
+        <img src="IMG_5047.JPG" class="gallery-item">
+    </div></div>
+</div>
+
+<div class="window" id="video-window" style="width: 480px; top: 80px; left: 150px;">
+    <div class="title-bar"><div class="title-bar-text">Valentine Video Player</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('video-window')"></button></div></div>
+    <div class="window-body">
+        <label>Select Song:</label>
+        <select class="video-selector" id="video-select" onchange="changeVideo()">
+            <option value="fd0uuy4mDrE">So Into You</option>
+            <option value="POkQXeTv7-4">Sent From Heaven</option>
+            <option value="vD1bemWtjUU">Folded</option>
+            <option value="8dM5QYdTo08">Adorn You</option>
+            <option value="hcie4MOU-wQ">How Do I Breathe</option>
+            <option value="oKOtzIo-uYw">Killing Me Softly</option>
+            <option value="-zzP29emgpg">Take Care</option>
+            <option value="xEB2nZJ3ynY">Until The End Of Time</option>
+        </select>
+        <div class="video-container"><iframe id="video-player" width="100%" height="100%" src="https://www.youtube.com/embed/fd0uuy4mDrE" frameborder="0" allowfullscreen></iframe></div>
+    </div>
+</div>
+
+<div class="window" id="music-window" style="width: 380px; top: 150px; left: 450px;">
+    <div class="title-bar"><div class="title-bar-text">Background Music</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('music-window')"></button></div></div>
+    <div class="window-body" id="music-container"></div>
+</div>
+
+<div class="window" id="letter-window" style="width: 300px; top: 320px; left: 80px;">
+    <div class="title-bar"><div class="title-bar-text">Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('letter-window')"></button></div></div>
+    <div class="window-body"><p>Happy Valentine's Day! ❤️</p><p>I hope you like these songs. They remind me of us.</p></div>
+</div>
+
+<div class="taskbar">
+    <div class="start-button"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16"> Start</div>
+    <marquee style="flex-grow: 1; color: #000080; font-weight: bold; margin-top: 5px;">❤️ FOREVER SWEET ❤️ I LOVE YOU ❤️ 17/05/2025 ❤️</marquee>
+    <div class="time" id="clock">12:00 PM</div>
+</div>
+
+<script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
+<script>
+    function checkLogin() {
+        if(document.getElementById('password-input').value === "17/05/2025") {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('desktop').style.display = 'grid';
+            document.getElementById('music-container').innerHTML = `<iframe allow="autoplay" frameborder="0" height="150" style="width:100%;" src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012&autoplay=1"></iframe>`;
+            new cursoreffects.fairyDustCursor({colors: ["#ff0000", "#ffffff"]});
+            setTimeout(() => { document.getElementById('clippy').style.display = 'block'; }, 4000);
+            setTimeout(() => { document.getElementById('bsod').style.display = 'block'; }, 180000); 
+        } else { alert("Incorrect Password!"); }
+    }
+    function toggleWindow(id) {
+        const win = document.getElementById(id);
+        win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
+    }
+    function changeVideo() {
+        const id = document.getElementById('video-select').value;
+        document.getElementById('video-player').src = "https://www.youtube.com/embed/" + id;
+    }
+    document.querySelectorAll('.window').forEach(win => {
+        const header = win.querySelector('.title-bar');
+        header.onmousedown = (e) => {
+            let offset = { x: e.clientX - win.offsetLeft, y: e.clientY - win.offsetTop };
+            document.onmousemove = (ev) => {
+                win.style.left = (ev.clientX - offset.x) + 'px';
+                win.style.top = (ev.clientY - offset.y) + 'px';
+            };
+            document.onmouseup = () => { document.onmousemove = null; };
+        };
+    });
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }, 1000);
+</script>
+
+</body>
+</html>
