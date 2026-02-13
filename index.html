@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine OS v2.0 - Special Edition</title>
+    <title>Valentine OS v4.0 - Cinema Edition</title>
     <link rel="stylesheet" href="https://unpkg.com/98.css">
     <style>
         body { background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: "MS Sans Serif", Arial, sans-serif; }
@@ -13,47 +13,51 @@
         #bsod { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0000AA; color: white; padding: 50px; display: none; z-index: 10000; font-family: 'Courier New', Courier, monospace; cursor: pointer; }
 
         /* Desktop */
-        #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 100px); gap: 20px; height: calc(100vh - 40px); }
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; }
-        .icon img { width: 32px; height: 32px; margin-bottom: 5px; }
+        #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 110px); grid-template-rows: repeat(auto-fill, 110px); gap: 20px; height: calc(100vh - 40px); }
+        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; width: 90px; }
+        .icon img { width: 32px; height: 32px; margin-bottom: 5px; pointer-events: none; }
 
         /* Windows */
-        .window { position: absolute; z-index: 10; display: none; width: 300px; cursor: default; }
+        .window { position: absolute; z-index: 10; display: none; background: silver; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; padding: 3px; }
+        .title-bar { cursor: move; }
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-height: 350px; overflow-y: auto; padding: 10px; background: #fff; border: 2px inset; }
         .gallery-item { width: 100%; border: 1px solid #000; }
 
+        /* Video Styling */
+        .video-selector { width: 100%; margin-bottom: 10px; padding: 5px; }
+        .video-container { background: black; width: 100%; height: 240px; border: 2px inset; }
+
         /* Clippy */
         #clippy { position: fixed; bottom: 50px; right: 20px; width: 150px; z-index: 2000; display: none; }
-        .clippy-bubble { background: #FFFFE1; border: 1px solid black; border-radius: 5px; padding: 8px; font-size: 11px; margin-bottom: 10px; position: relative; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+        .clippy-bubble { background: #FFFFE1; border: 1px solid black; border-radius: 5px; padding: 8px; font-size: 11px; margin-bottom: 10px; color: black; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
 
         /* Taskbar */
         .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
-        .start-button { font-weight: bold; display: flex; align-items: center; padding: 2px 5px; cursor: pointer; border: 2px outset; }
-        .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; font-size: 12px; }
+        .start-button { font-weight: bold; display: flex; align-items: center; padding: 2px 5px; cursor: pointer; border: 2px outset; background: #c0c0c0; height: 22px; }
+        .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; font-size: 12px; color: black; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="window" style="display: block; width: 320px;">
-        <div class="title-bar"><div class="title-bar-text">Welcome to Valentine OS</div></div>
+        <div class="title-bar"><div class="title-bar-text">User Login</div></div>
         <div class="window-body">
-            <p>Password (DD/MM/YYYY):</p>
-            <input id="password-input" type="text" style="width: 100%;" placeholder="Our Date" />
+            <p>Please enter password to access memories:</p>
+            <input id="password-input" type="text" style="width: 100%;" placeholder="17/05/2025" />
             <div style="text-align: right; margin-top: 15px;"><button onclick="checkLogin()">OK</button></div>
         </div>
     </div>
 </div>
 
 <div id="bsod" onclick="this.style.display='none'">
-    <p>A problem has been detected and Valentine OS has been shut down to prevent damage to your heart.</p>
-    <p>ERROR_TOO_MUCH_LOVE_OVERLOAD</p>
-    <p>Technical information:<br>*** STOP: 0x000000LOVE (17, 05, 2025)</p>
-    <p>Click anywhere to resume...</p>
+    <p>ERROR_TOO_MUCH_LOVE_DETECTED</p>
+    <p>A fatal exception has occurred. Your heart rate is exceeding safe limits.</p>
+    <p>Click anywhere to ignore and continue loving...</p>
 </div>
 
 <div id="clippy">
-    <div class="clippy-bubble" id="clippy-text">It looks like you're browsing memories. Need a hug?</div>
+    <div class="clippy-bubble">It looks like you're listening to some classics. Good choice!</div>
     <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJpbm5ueG9reW5oZnA1YzhqbmZqbmZqbmZqbmZqbmZqbmZqbmZqJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKSjPxyS080M10I/giphy.gif" width="80">
 </div>
 
@@ -61,6 +65,10 @@
     <div class="icon" onclick="toggleWindow('gallery-window')">
         <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png">
         <span>MEMORIES</span>
+    </div>
+    <div class="icon" onclick="toggleWindow('video-window')">
+        <img src="https://win98icons.alexmeub.com/icons/png/mmsys_cp-4.png">
+        <span>CINEMA</span>
     </div>
     <div class="icon" onclick="toggleWindow('music-window')">
         <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-3.png">
@@ -72,9 +80,9 @@
     </div>
 </div>
 
-<div class="window" id="gallery-window" style="width: 450px; top: 40px; left: 60px;">
+<div class="window" id="gallery-window" style="width: 450px; top: 20px; left: 40px;">
     <div class="title-bar">
-        <div class="title-bar-text">Imaging - Our Memories</div>
+        <div class="title-bar-text">Our Photos</div>
         <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div>
     </div>
     <div class="window-body">
@@ -90,52 +98,71 @@
     </div>
 </div>
 
-<div class="window" id="music-window" style="width: 400px; top: 150px; left: 400px;">
+<div class="window" id="video-window" style="width: 480px; top: 80px; left: 150px;">
     <div class="title-bar">
-        <div class="title-bar-text">Valentine Player</div>
+        <div class="title-bar-text">Valentine Video Player</div>
+        <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('video-window')"></button></div>
+    </div>
+    <div class="window-body">
+        <label>Select Song:</label>
+        <select class="video-selector" id="video-select" onchange="changeVideo()">
+            <option value="fd0uuy4mDrE">So Into You</option>
+            <option value="POkQXeTv7-4">Sent From Heaven</option>
+            <option value="vD1bemWtjUU">Folded</option>
+            <option value="8dM5QYdTo08">Adorn You</option>
+            <option value="hcie4MOU-wQ">How Do I Breathe</option>
+            <option value="oKOtzIo-uYw">Killing Me Softly</option>
+            <option value="-zzP29emgpg">Take Care</option>
+            <option value="xEB2nZJ3ynY">Until The End Of Time</option>
+        </select>
+        <div class="video-container">
+            <iframe id="video-player" width="100%" height="100%" src="https://www.youtube.com/embed/fd0uuy4mDrE" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<div class="window" id="music-window" style="width: 380px; top: 150px; left: 450px;">
+    <div class="title-bar">
+        <div class="title-bar-text">Background Music</div>
         <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('music-window')"></button></div>
     </div>
     <div class="window-body" id="music-container"></div>
 </div>
 
-<div class="window" id="letter-window" style="width: 300px; top: 300px; left: 100px;">
+<div class="window" id="letter-window" style="width: 300px; top: 320px; left: 80px;">
     <div class="title-bar">
         <div class="title-bar-text">Notepad</div>
         <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('letter-window')"></button></div>
     </div>
     <div class="window-body">
         <p>Happy Valentine's Day! ❤️</p>
-        <p>You are the best "feature" in my life.</p>
+        <p>I hope you like these songs. They remind me of us.</p>
     </div>
 </div>
 
 <div class="taskbar">
-    <div class="start-button">Start</div>
-    <marquee style="flex-grow: 1; color: #000080; font-weight: bold;">❤️ FOREVER SWEET ❤️ I LOVE YOU ❤️</marquee>
+    <div class="start-button"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16"> Start</div>
+    <marquee style="flex-grow: 1; color: #000080; font-weight: bold; margin-top: 5px;">❤️ FOREVER SWEET ❤️ I LOVE YOU ❤️ 17/05/2025 ❤️</marquee>
     <div class="time" id="clock">12:00 PM</div>
 </div>
 
 <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
 <script>
     function checkLogin() {
-        const pass = document.getElementById('password-input').value;
-        if(pass === "17/05/2025") {
+        if(document.getElementById('password-input').value === "17/05/2025") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('desktop').style.display = 'grid';
             
-            // Music Injection
+            // Auto-play background music
             document.getElementById('music-container').innerHTML = `
                 <iframe allow="autoplay" frameborder="0" height="150" style="width:100%;" 
                 src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012&autoplay=1"></iframe>`;
             
-            // Cursor Effect
             new cursoreffects.fairyDustCursor({colors: ["#ff0000", "#ffffff"]});
-            
-            // Delays for Features
-            setTimeout(() => { document.getElementById('clippy').style.display = 'block'; }, 3000);
-            setTimeout(() => { document.getElementById('bsod').style.display = 'block'; }, 300000); 
+            setTimeout(() => { document.getElementById('clippy').style.display = 'block'; }, 4000);
+            setTimeout(() => { document.getElementById('bsod').style.display = 'block'; }, 180000); 
         } else {
-            alert("Wrong password!");
+            alert("Incorrect Password!");
         }
     }
 
@@ -144,10 +171,14 @@
         win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
     }
 
+    function changeVideo() {
+        const id = document.getElementById('video-select').value;
+        document.getElementById('video-player').src = "https://www.youtube.com/embed/" + id;
+    }
+
     // Draggable Logic
     document.querySelectorAll('.window').forEach(win => {
         const header = win.querySelector('.title-bar');
-        if(!header) return;
         header.onmousedown = (e) => {
             let offset = { x: e.clientX - win.offsetLeft, y: e.clientY - win.offsetTop };
             document.onmousemove = (ev) => {
