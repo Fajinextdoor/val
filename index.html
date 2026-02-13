@@ -3,105 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine OS v2.0 - Special Edition</title>
+    <title>Valentine OS v2.0</title>
     <link rel="stylesheet" href="https://unpkg.com/98.css">
     <style>
         body { background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: "MS Sans Serif", Arial, sans-serif; }
-        #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 100px); gap: 20px; height: calc(100vh - 40px); }
         
+        /* Overlays */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #008080; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #bsod { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0000AA; color: white; padding: 50px; display: none; z-index: 10000; font-family: 'Courier New', Courier, monospace; cursor: pointer; }
-
-        .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; }
+        #desktop { padding: 20px; display: none; height: 100vh; }
+        
+        .icon { display: flex; flex-direction: column; align-items: center; width: 80px; margin-bottom: 20px; cursor: pointer; color: white; text-align: center; }
         .icon img { width: 32px; height: 32px; margin-bottom: 5px; }
-        .window { position: absolute; z-index: 10; display: none; }
         
-        /* Gallery Styles */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #fff;
-            border: 2px inset;
-        }
-        .gallery-item { width: 100%; border: 1px solid #000; cursor: zoom-in; }
-        
-        .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
-        .start-button { font-weight: bold; display: flex; align-items: center; padding: 2px 5px; cursor: pointer; }
-        .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; }
+        /* Windows */
+        .window { position: absolute; z-index: 10; display: none; background: silver; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; padding: 3px; }
+        .title-bar { background: linear-gradient(90deg, navy, #1084d0); padding: 3px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .window-body { padding: 10px; }
+
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-height: 300px; overflow-y: auto; }
+        .gallery-item { width: 100%; border: 2px solid white; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="window" style="display: block; width: 300px;">
-        <div class="title-bar"><div class="title-bar-text">Login</div></div>
+        <div class="title-bar">Login Required</div>
         <div class="window-body">
-            <p>Enter password (17/05/2025):</p>
-            <input id="password-input" type="text" style="width: 100%;" />
-            <div style="text-align: right; margin-top: 10px;">
-                <button onclick="checkLogin()">OK</button>
-            </div>
+            <p>Enter Password (17/05/2025):</p>
+            <input type="text" id="pass-input" style="width: 100%; margin-bottom: 10px;">
+            <button onclick="attemptLogin()">Login</button>
+            <p id="error-msg" style="color: red; display: none;">Incorrect Password!</p>
         </div>
     </div>
 </div>
 
 <div id="desktop">
-    <div class="icon" onclick="toggleWindow('gallery-window')">
+    <div class="icon" onclick="openWindow('gallery')">
         <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png">
-        <span>MEMORIES.JPG</span>
+        <span>Photos</span>
     </div>
-
-    <div class="icon" onclick="toggleWindow('letter-window')">
+    <div class="icon" onclick="openWindow('letter')">
         <img src="https://win98icons.alexmeub.com/icons/png/notepad-5.png">
-        <span>READ_ME.txt</span>
+        <span>Read Me</span>
     </div>
 </div>
 
-<div class="window" id="gallery-window" style="width: 450px; top: 50px; left: 100px;">
-    <div class="title-bar">
-        <div class="title-bar-text">Imaging - Our Memories</div>
-        <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div>
-    </div>
+<div id="gallery" class="window" style="top: 50px; left: 50px; width: 400px;">
+    <div class="title-bar"><span>Our Memories</span><button onclick="closeWindow('gallery')">X</button></div>
     <div class="window-body">
-        <p>Double-click to expand a memory.</p>
         <div class="gallery-grid">
-            <img src="IMG_3466.JPG" class="gallery-item" onclick="window.open(this.src)">
-            <img src="IMG_3472.JPG" class="gallery-item" onclick="window.open(this.src)">
-            <img src="IMG_3465.JPG" class="gallery-item" onclick="window.open(this.src)">
-            <img src="IMG_3670.JPG" class="gallery-item" onclick="window.open(this.src)">
-            <img src="IMG_3669.JPG" class="gallery-item" onclick="window.open(this.src)">
-            <img src="IMG_4876.JPG" class="gallery-item" onclick="window.open(this.src)">
-            <img src="IMG_5047.JPG" class="gallery-item" onclick="window.open(this.src)">
+            <img src="IMG_3466.JPG" class="gallery-item" onerror="this.style.display='none'">
+            <img src="IMG_3472.JPG" class="gallery-item" onerror="this.style.display='none'">
+            <img src="IMG_3465.JPG" class="gallery-item" onerror="this.style.display='none'">
+            <img src="IMG_3670.JPG" class="gallery-item" onerror="this.style.display='none'">
+            <img src="IMG_3669.JPG" class="gallery-item" onerror="this.style.display='none'">
+            <img src="IMG_4876.JPG" class="gallery-item" onerror="this.style.display='none'">
+            <img src="IMG_5047.JPG" class="gallery-item" onerror="this.style.display='none'">
         </div>
     </div>
 </div>
 
-<div class="taskbar">
-    <button class="start-button"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png"> Start</button>
-    <marquee style="flex-grow: 1; color: #000080; font-weight: bold;">❤️ HAPPY VALENTINE'S DAY! ❤️ YOU ARE MY WORLD ❤️</marquee>
-    <div class="time" id="clock">12:00 PM</div>
+<div id="letter" class="window" style="top: 100px; left: 200px; width: 300px;">
+    <div class="title-bar"><span>Love Letter</span><button onclick="closeWindow('letter')">X</button></div>
+    <div class="window-body">
+        <p>Happy Valentine's Day! ❤️</p>
+        <p>You are my favorite person.</p>
+    </div>
 </div>
 
 <script>
-    function checkLogin() {
-        if(document.getElementById('password-input').value === "17/05/2025") {
+    function attemptLogin() {
+        var input = document.getElementById('pass-input').value;
+        if(input === "17/05/2025") {
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('desktop').style.display = 'grid';
-        } else { alert("Wrong password!"); }
+            document.getElementById('desktop').style.display = 'block';
+        } else {
+            document.getElementById('error-msg').style.display = 'block';
+        }
     }
 
-    function toggleWindow(id) {
-        const win = document.getElementById(id);
-        win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
+    function openWindow(id) {
+        document.getElementById(id).style.display = 'block';
     }
 
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    }, 1000);
+    function closeWindow(id) {
+        document.getElementById(id).style.display = 'none';
+    }
 </script>
 
 </body>
