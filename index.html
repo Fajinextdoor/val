@@ -3,31 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine OS v2.0</title>
+    <title>Valentine OS v2.0 - Special Edition</title>
     <link rel="stylesheet" href="https://unpkg.com/98.css">
     <style>
         body { background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: "MS Sans Serif", Arial, sans-serif; }
+        
+        /* Overlays */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #008080; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #desktop { display: none; padding: 20px; height: 100vh; grid-template-columns: repeat(auto-fill, 100px); gap: 20px; }
+        #bsod { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0000AA; color: white; padding: 50px; display: none; z-index: 10000; font-family: 'Courier New', Courier, monospace; cursor: pointer; }
+
+        /* Desktop */
+        #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 100px); gap: 20px; height: calc(100vh - 40px); }
         .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; }
         .icon img { width: 32px; height: 32px; margin-bottom: 5px; }
-        .window { position: absolute; z-index: 10; display: none; background: silver; }
+
+        /* Windows */
+        .window { position: absolute; z-index: 10; display: none; width: 300px; cursor: default; }
         .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-height: 350px; overflow-y: auto; padding: 10px; background: #fff; border: 2px inset; }
         .gallery-item { width: 100%; border: 1px solid #000; }
+
+        /* Clippy */
+        #clippy { position: fixed; bottom: 50px; right: 20px; width: 150px; z-index: 2000; display: none; }
+        .clippy-bubble { background: #FFFFE1; border: 1px solid black; border-radius: 5px; padding: 8px; font-size: 11px; margin-bottom: 10px; position: relative; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+
+        /* Taskbar */
         .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
+        .start-button { font-weight: bold; display: flex; align-items: center; padding: 2px 5px; cursor: pointer; border: 2px outset; }
+        .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; font-size: 12px; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
-    <div class="window" style="display: block; width: 300px;">
-        <div class="title-bar"><div class="title-bar-text">Login</div></div>
+    <div class="window" style="display: block; width: 320px;">
+        <div class="title-bar"><div class="title-bar-text">Welcome to Valentine OS</div></div>
         <div class="window-body">
-            <p>Password (17/05/2025):</p>
-            <input id="password-input" type="text" style="width: 100%;" />
-            <div style="text-align: right; margin-top: 10px;"><button onclick="checkLogin()">OK</button></div>
+            <p>Password (DD/MM/YYYY):</p>
+            <input id="password-input" type="text" style="width: 100%;" placeholder="Our Date" />
+            <div style="text-align: right; margin-top: 15px;"><button onclick="checkLogin()">OK</button></div>
         </div>
     </div>
+</div>
+
+<div id="bsod" onclick="this.style.display='none'">
+    <p>A problem has been detected and Valentine OS has been shut down to prevent damage to your heart.</p>
+    <p>ERROR_TOO_MUCH_LOVE_OVERLOAD</p>
+    <p>Technical information:<br>*** STOP: 0x000000LOVE (17, 05, 2025)</p>
+    <p>Click anywhere to resume...</p>
+</div>
+
+<div id="clippy">
+    <div class="clippy-bubble" id="clippy-text">It looks like you're browsing memories. Need a hug?</div>
+    <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJpbm5ueG9reW5oZnA1YzhqbmZqbmZqbmZqbmZqbmZqbmZqbmZqJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKSjPxyS080M10I/giphy.gif" width="80">
 </div>
 
 <div id="desktop">
@@ -39,11 +66,15 @@
         <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-3.png">
         <span>MUSIC</span>
     </div>
+    <div class="icon" onclick="toggleWindow('letter-window')">
+        <img src="https://win98icons.alexmeub.com/icons/png/notepad-5.png">
+        <span>READ_ME.txt</span>
+    </div>
 </div>
 
 <div class="window" id="gallery-window" style="width: 450px; top: 40px; left: 60px;">
     <div class="title-bar">
-        <div class="title-bar-text">Our Memories</div>
+        <div class="title-bar-text">Imaging - Our Memories</div>
         <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div>
     </div>
     <div class="window-body">
@@ -61,29 +92,76 @@
 
 <div class="window" id="music-window" style="width: 400px; top: 150px; left: 400px;">
     <div class="title-bar">
-        <div class="title-bar-text">Music Player</div>
+        <div class="title-bar-text">Valentine Player</div>
         <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('music-window')"></button></div>
     </div>
     <div class="window-body" id="music-container"></div>
 </div>
 
-<div class="taskbar">
-    <button style="font-weight: bold;">Start</button>
-    <marquee style="flex-grow: 1; color: #000080; font-weight: bold;">❤️ HAPPY VALENTINE'S DAY ❤️</marquee>
+<div class="window" id="letter-window" style="width: 300px; top: 300px; left: 100px;">
+    <div class="title-bar">
+        <div class="title-bar-text">Notepad</div>
+        <div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('letter-window')"></button></div>
+    </div>
+    <div class="window-body">
+        <p>Happy Valentine's Day! ❤️</p>
+        <p>You are the best "feature" in my life.</p>
+    </div>
 </div>
 
+<div class="taskbar">
+    <div class="start-button">Start</div>
+    <marquee style="flex-grow: 1; color: #000080; font-weight: bold;">❤️ FOREVER SWEET ❤️ I LOVE YOU ❤️</marquee>
+    <div class="time" id="clock">12:00 PM</div>
+</div>
+
+<script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
 <script>
     function checkLogin() {
-        if(document.getElementById('password-input').value === "17/05/2025") {
+        const pass = document.getElementById('password-input').value;
+        if(pass === "17/05/2025") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('desktop').style.display = 'grid';
-            document.getElementById('music-container').innerHTML = `<iframe allow="autoplay" frameborder="0" height="150" style="width:100%;" src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012&autoplay=1"></iframe>`;
-        } else { alert("Wrong password!"); }
+            
+            // Music Injection
+            document.getElementById('music-container').innerHTML = `
+                <iframe allow="autoplay" frameborder="0" height="150" style="width:100%;" 
+                src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012&autoplay=1"></iframe>`;
+            
+            // Cursor Effect
+            new cursoreffects.fairyDustCursor({colors: ["#ff0000", "#ffffff"]});
+            
+            // Delays for Features
+            setTimeout(() => { document.getElementById('clippy').style.display = 'block'; }, 3000);
+            setTimeout(() => { document.getElementById('bsod').style.display = 'block'; }, 300000); 
+        } else {
+            alert("Wrong password!");
+        }
     }
+
     function toggleWindow(id) {
         const win = document.getElementById(id);
         win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
     }
+
+    // Draggable Logic
+    document.querySelectorAll('.window').forEach(win => {
+        const header = win.querySelector('.title-bar');
+        if(!header) return;
+        header.onmousedown = (e) => {
+            let offset = { x: e.clientX - win.offsetLeft, y: e.clientY - win.offsetTop };
+            document.onmousemove = (ev) => {
+                win.style.left = (ev.clientX - offset.x) + 'px';
+                win.style.top = (ev.clientY - offset.y) + 'px';
+            };
+            document.onmouseup = () => { document.onmousemove = null; };
+        };
+    });
+
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }, 1000);
 </script>
+
 </body>
 </html>
