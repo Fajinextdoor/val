@@ -3,26 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valentine OS v7.0</title>
+    <title>Valentine OS - Final Edition</title>
     <link rel="stylesheet" href="https://unpkg.com/98.css">
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <style>
         body { background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow: hidden; font-family: "MS Sans Serif", Arial, sans-serif; }
+        
+        /* Login & BSOD */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #008080; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #bsod { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0000AA; color: white; padding: 50px; display: none; z-index: 10000; font-family: 'Courier New', Courier, monospace; }
+        #bsod { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0000AA; color: white; padding: 50px; display: none; z-index: 10000; font-family: 'Courier New', Courier, monospace; cursor: pointer; }
+
+        /* Desktop */
         #desktop { padding: 20px; display: none; grid-template-columns: repeat(auto-fill, 110px); grid-template-rows: repeat(auto-fill, 110px); gap: 20px; height: calc(100vh - 40px); }
         .icon { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: white; text-align: center; font-size: 11px; text-shadow: 1px 1px black; width: 90px; }
         .icon img { width: 32px; height: 32px; margin-bottom: 5px; pointer-events: none; }
-        .window { position: absolute; z-index: 10; display: none; background: silver; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; padding: 3px; }
+
+        /* Windows */
+        .window { position: absolute; z-index: 10; display: none; background: silver; box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; padding: 3px; min-width: 250px; }
         .title-bar { cursor: move; }
-        .video-container { background: black; width: 100%; height: 260px; border: 2px inset; }
+
+        /* Media Player & Visualizer */
+        .wmp-visualizer { background: black; width: 100%; height: 80px; margin-bottom: 5px; border: 2px inset; display: flex; align-items: flex-end; justify-content: space-around; padding-bottom: 5px; }
+        .bar { width: 6px; background: linear-gradient(to top, #00FF00, #FFFF00, #FF0000); animation: bounce 1.2s infinite ease-in-out; }
+        @keyframes bounce { 0%, 100% { height: 10%; } 50% { height: 90%; } }
+        .bar:nth-child(2n) { animation-delay: 0.1s; }
+        .bar:nth-child(3n) { animation-delay: 0.3s; }
+        .bar:nth-child(4n) { animation-delay: 0.6s; }
+
+        /* Gallery */
+        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 280px; overflow-y: auto; background: white; border: 2px inset; padding: 5px; }
+        .gallery-grid img { width: 100%; border: 1px solid black; background: #f0f0f0; }
+
+        /* Taskbar */
         .taskbar { position: fixed; bottom: 0; left: 0; right: 0; height: 30px; background: #c0c0c0; border-top: 2px solid #ffffff; display: flex; align-items: center; padding: 2px; z-index: 1000; }
         .start-button { font-weight: bold; display: flex; align-items: center; padding: 2px 5px; border: 2px outset; background: #c0c0c0; height: 22px; color: black; cursor: pointer; }
         .time { margin-left: auto; border: 2px inset #ffffff; padding: 2px 10px; background: #c0c0c0; font-size: 12px; color: black; }
-        .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 300px; overflow-y: auto; background: white; border: 2px inset; padding: 5px; }
-        .gallery-grid img { width: 100%; border: 1px solid black; }
+        #quote-marquee { flex-grow: 1; color: #000080; font-weight: bold; padding-top: 5px; font-size: 12px; }
+
+        /* Clippy */
         #clippy { position: fixed; bottom: 50px; right: 20px; width: 150px; z-index: 2000; display: none; }
         .clippy-bubble { background: #FFFFE1; border: 1px solid black; border-radius: 5px; padding: 8px; font-size: 11px; margin-bottom: 10px; color: black; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
-        #quote-marquee { flex-grow: 1; color: #000080; font-weight: bold; padding-top: 5px; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -31,32 +51,45 @@
     <div class="window" style="display: block; width: 320px;">
         <div class="title-bar"><div class="title-bar-text">User Login</div></div>
         <div class="window-body">
-            <p>Password (DD/MM/YYYY):</p>
-            <input id="password-input" type="text" style="width: 100%;" placeholder="17/05/2025" />
-            <div style="text-align: right; margin-top: 15px;"><button onclick="checkLogin()">OK</button></div>
+            <p style="text-align: center;">Valentine OS v1.0<br>Please enter password to continue.</p>
+            <input id="password-input" type="text" style="width: 100%;" placeholder="DD/MM/YYYY" />
+            <div style="text-align: right; margin-top: 15px;"><button onclick="checkLogin()">Login</button></div>
         </div>
     </div>
 </div>
 
 <div id="bsod" onclick="this.style.display='none'">
-    <p>ERROR_TOO_MUCH_LOVE_OVERLOAD</p>
-    <p>Technical information:<br>*** STOP: 0x000000LOVE (17, 05, 2025)</p>
-    <p>Click anywhere to resume...</p>
+    <p>*** STOP: 0x000000LOVE (FATAL_ROMANCE_ERROR)</p>
+    <p>A problem has been detected and Valentine OS has been shut down to prevent your heart from exploding.</p>
+    <p>If this is the first time you've seen this Stop error, kiss the developer.</p>
+    <p>Click anywhere to restart...</p>
 </div>
 
 <div id="clippy">
-    <div class="clippy-bubble" id="clippy-msg">It looks like you're browsing memories. Need a hug?</div>
+    <div class="clippy-bubble">It looks like you're looking at photos! Want me to help you pick a favorite?</div>
     <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJpbm5ueG9reW5oZnA1YzhqbmZqbmZqbmZqbmZqbmZqbmZqbmZqJmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/3o7TKSjPxyS080M10I/giphy.gif" width="80">
 </div>
 
 <div id="desktop">
+    <div class="icon" onclick="toggleWindow('music-window')"><img src="https://win98icons.alexmeub.com/icons/png/mmsys_cp-0.png"><span>PLAYER</span></div>
     <div class="icon" onclick="toggleWindow('video-window')"><img src="https://win98icons.alexmeub.com/icons/png/mmsys_cp-4.png"><span>CINEMA</span></div>
     <div class="icon" onclick="toggleWindow('gallery-window')"><img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"><span>PHOTOS</span></div>
-    <div class="icon" onclick="toggleWindow('letter-window')"><img src="https://win98icons.alexmeub.com/icons/png/notepad-5.png"><span>READ_ME.txt</span></div>
 </div>
 
-<div class="window" id="video-window" style="width: 480px; top: 20px; left: 20px;">
-    <div class="title-bar"><div class="title-bar-text">Cinema</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('video-window')"></button></div></div>
+<div class="window" id="music-window" style="width: 350px; top: 40px; left: 40px;">
+    <div class="title-bar"><div class="title-bar-text">Windows Media Player</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('music-window')"></button></div></div>
+    <div class="window-body">
+        <div class="wmp-visualizer">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <iframe allow="autoplay" frameborder="0" height="175" style="width:100%;overflow:hidden;background:transparent;" 
+        src="https://embed.music.apple.com/gb/album/forever-sweet/1622380007?i=1622380012"></iframe>
+    </div>
+</div>
+
+<div class="window" id="video-window" style="width: 480px; top: 80px; left: 100px;">
+    <div class="title-bar"><div class="title-bar-text">Valentine Cinema</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('video-window')"></button></div></div>
     <div class="window-body">
         <select id="video-select" onchange="changeVideo()" style="width:100%; margin-bottom:10px;">
             <option value="fd0uuy4mDrE">So Into You</option>
@@ -68,66 +101,74 @@
             <option value="-zzP29emgpg">Take Care</option>
             <option value="xEB2nZJ3ynY">Until The End Of Time</option>
         </select>
-        <div class="video-container"><iframe id="video-player" width="100%" height="100%" src="https://www.youtube.com/embed/fd0uuy4mDrE" frameborder="0" allowfullscreen></iframe></div>
-    </div>
-</div>
-
-<div class="window" id="gallery-window" style="width: 400px; top: 100px; left: 300px;">
-    <div class="title-bar"><div class="title-bar-text">Memories</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div></div>
-    <div class="window-body">
-        <div class="gallery-grid">
-            <img src="IMG_3466.jpeg"> <img src="IMG_3472.jpeg">
-            <img src="IMG_3465.jpeg"> <img src="IMG_3670.jpeg">
-            <img src="IMG_3669.jpeg"> <img src="IMG_4876.jpeg">
-            <img src="IMG_5047.jpeg">
+        <div style="background:black; border:2px inset; height:270px;">
+            <iframe id="video-player" width="100%" height="100%" src="https://www.youtube.com/embed/fd0uuy4mDrE" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
 </div>
 
-<div class="window" id="letter-window" style="width: 300px; top: 250px; left: 80px;">
-    <div class="title-bar"><div class="title-bar-text">Notepad</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('letter-window')"></button></div></div>
-    <div class="window-body"><p>Happy Valentine's Day! ❤️</p><p>I built this OS just for you. Every moment with you is my favorite.</p></div>
+<div class="window" id="gallery-window" style="width: 420px; top: 150px; left: 350px;">
+    <div class="title-bar"><div class="title-bar-text">Memory Gallery</div><div class="title-bar-controls"><button aria-label="Close" onclick="toggleWindow('gallery-window')"></button></div></div>
+    <div class="window-body">
+        <div class="gallery-grid" id="main-gallery">
+            <img class="heic-img" data-src="IMG_3466.jpeg"> <img class="heic-img" data-src="IMG_3472.jpeg">
+            <img class="heic-img" data-src="IMG_3465.jpeg"> <img class="heic-img" data-src="IMG_3670.jpeg">
+            <img class="heic-img" data-src="IMG_3669.jpeg"> <img class="heic-img" data-src="IMG_4876.jpeg">
+            <img class="heic-img" data-src="IMG_5047.jpeg">
+        </div>
+        <p style="font-size: 9px; margin-top: 5px;">* HEIC images will automatically convert on load.</p>
+    </div>
 </div>
 
 <div class="taskbar">
-    <div class="start-button"><img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" style="margin-right:5px"> Start</div>
-    <marquee id="quote-marquee">❤️ Happy Valentine's Day! ❤️ I Love You ❤️ Loading Love Notes...</marquee>
+    <div class="start-button" onclick="alert('System Version: Love.98\nCreated by: Fajinextdoor')">
+        <img src="https://win98icons.alexmeub.com/icons/png/windows-0.png" width="16" style="margin-right:5px"> Start
+    </div>
+    <marquee id="quote-marquee"></marquee>
     <div class="time" id="clock">12:00 PM</div>
 </div>
 
 <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
 <script>
     const quotes = [
-        "❤️ You are my greatest adventure. ❤️",
-        "🌟 Love is not about how many days, months, or years you have been together. 🌟",
-        "✨ You make my heart skip a beat. ✨",
-        "🌹 Where there is love, there is life. 🌹",
-        "💫 You are the 'feature' I never knew I needed. 💫",
-        "🧸 Every love story is beautiful, but ours is my favorite. 🧸",
-        "🌈 To the world you may be one person, but to me you are the world. 🌈",
-        "🔥 Forever isn't long enough with you. 🔥"
+        "❤️ Forever Sweet ❤️", 
+        "✨ You make my world brighter ✨", 
+        "🌹 Happy Valentine's Day 🌹", 
+        "💫 You are my favorite person 💫",
+        "🌈 To the world you are one person, but to me you are the world 🌈"
     ];
 
-    function rotateQuotes() {
-        const marquee = document.getElementById('quote-marquee');
-        marquee.innerText = quotes.join(" | ");
+    async function processImages() {
+        const images = document.querySelectorAll('.heic-img');
+        for (let img of images) {
+            const url = img.getAttribute('data-src');
+            if (url.toLowerCase().endsWith('.heic')) {
+                try {
+                    const res = await fetch(url);
+                    const blob = await res.blob();
+                    const conversion = await heic2any({ blob, toType: "image/jpeg", quality: 0.5 });
+                    img.src = URL.createObjectURL(conversion);
+                } catch (e) { console.error("HEIC Error:", e); }
+            } else { img.src = url; }
+        }
     }
 
     function checkLogin() {
-        const pass = document.getElementById('password-input').value.trim();
-        if(pass === "17/05/2025") {
+        if(document.getElementById('password-input').value.trim() === "17/05/2025") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('desktop').style.display = 'grid';
-            rotateQuotes();
+            document.getElementById('quote-marquee').innerText = quotes.join(" | ");
+            processImages();
             new cursoreffects.fairyDustCursor({colors: ["#ff0000", "#ffffff"]});
-            setTimeout(() => { document.getElementById('clippy').style.display = 'block'; }, 4000);
-            setTimeout(() => { document.getElementById('bsod').style.display = 'block'; }, 400000); 
-        } else { alert("Try 17/05/2025"); }
+            setTimeout(() => { document.getElementById('clippy').style.display = 'block'; }, 8000);
+            setTimeout(() => { document.getElementById('bsod').style.display = 'block'; }, 600000); 
+        } else { alert("Incorrect Password. Hint: Our date!"); }
     }
 
     function toggleWindow(id) {
         const win = document.getElementById(id);
         win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'block' : 'none';
+        if(win.style.display === 'block') { win.style.zIndex = Math.floor(Date.now() / 1000); }
     }
 
     function changeVideo() {
@@ -138,6 +179,7 @@
     document.querySelectorAll('.window').forEach(win => {
         const header = win.querySelector('.title-bar');
         header.onmousedown = (e) => {
+            win.style.zIndex = Math.floor(Date.now() / 1000);
             let offset = { x: e.clientX - win.offsetLeft, y: e.clientY - win.offsetTop };
             document.onmousemove = (ev) => {
                 win.style.left = (ev.clientX - offset.x) + 'px';
@@ -151,4 +193,3 @@
 </script>
 </body>
 </html>
-
